@@ -1,16 +1,6 @@
 .App {
   text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+  background-color: blueviolet;
 }
 
 .App-header {
@@ -24,15 +14,23 @@
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.main-container {
+  height: 800px;
+  position: relative;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.answer {
+  position: absolute;
+  bottom: 0px;
+}
+
+.gameboard {
+  text-align: center;
+  background-color: lightgrey;
+}
+
+.selectPegs {
+  text-align: center;
+  background-color: rgb(225, 226, 228);
+  height: 5em;
 }
