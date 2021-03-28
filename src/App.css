@@ -29,8 +29,15 @@
   background-color: lightgrey;
 }
 
-.selectPegs {
-  text-align: center;
+.pegBin {
   background-color: rgb(225, 226, 228);
   height: 5em;
+}
+
+.displayTableRow {
+  height: 2.5em;
+}
+
+.selection {
+  min-height: 300px;
 }

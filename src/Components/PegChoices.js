@@ -10,7 +10,7 @@ function PegChoices(props) {
   const width = Math.floor(12 / numCols);
 
   return (
-    <Grid className="selectPegs" container>
+    <Grid container justify="center">
       {colorChoices.map((c, idx) => {
         return <Peg key={`peg-${idx}`} color={c} />;
       })}
