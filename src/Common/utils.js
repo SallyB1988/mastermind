@@ -1,3 +1,19 @@
+import { SOLUTION_LENGTH, COLOR_CHOICES } from "./constants";
+
+export function getRandomInt(max) {
+  return Math.floor(Math.random() * Math.floor(max));
+}
+
+export function createSolution() {
+  let solution = [];
+  while (solution.length < SOLUTION_LENGTH) {
+    const index = getRandomInt(COLOR_CHOICES.length);
+    console.log(index);
+    solution.push(COLOR_CHOICES[index]);
+  }
+  return solution;
+}
+
 export function splitIntoChunks(arr, chunk) {
   let newArr = [];
   while (arr.length > 0) {

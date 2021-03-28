@@ -41,3 +41,11 @@
 .selection {
   min-height: 300px;
 }
+
+.restart {
+  background-color: #e3e5eb;
+  height: 200vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+}
