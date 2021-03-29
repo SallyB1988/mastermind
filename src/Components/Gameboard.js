@@ -1,10 +1,29 @@
-import React, { createContext, useContext, useReducer, useEffect } from "react";
-import { Container, Grid, Card, Button, CardContent } from "@material-ui/core";
+import React, {
+  createContext,
+  useContext,
+  useReducer,
+  useEffect,
+  useState,
+} from "react";
+import {
+  Container,
+  Grid,
+  Card,
+  Button,
+  CardContent,
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+} from "@material-ui/core";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import { makeStyles } from "@material-ui/core/styles";
+
 import _ from "lodash";
 import PegChoices from "./PegChoices";
 import DisplayRow from "./DisplayRow";
 import DisplayCode from "./DisplayCode";
 import { compareToAnswer, createSolution } from "../Common/utils";
+import { SOLUTION_LENGTH } from "../Common/constants";
 const initialState = {
   selectedColors: [],
   guesses: [],
@@ -20,11 +39,21 @@ const actions = {
   RESTART: "RESTART",
 };
 
+const useStyles = makeStyles((theme) => ({
+  root: {
+    "& > *": {
+      margin: theme.spacing(1),
+    },
+  },
+}));
+
 function gameReducer(state, action) {
   switch (action.type) {
     case actions.SELECT_COLOR:
-      let newColors = [...state.selectedColors, action.value];
-      return { ...state, selectedColors: newColors };
+      const newColors = [...state.selectedColors, action.value];
+      return state.selectedColors.length < SOLUTION_LENGTH
+        ? { ...state, selectedColors: newColors }
+        : state;
     case actions.SUBMIT_GUESS:
       let newAnswerCodes = [
         ...state.answerCodes,
@@ -77,6 +106,8 @@ function Provider({ children }) {
 }
 
 function Board() {
+  const classes = useStyles();
+
   const {
     selectedColors,
     resetSelectColors,
@@ -95,6 +126,8 @@ function Board() {
       createSolution();
     }
   });
+
+  const [expandAccordion, setExpandAccordion] = useState(false);
 
   return (
     <Container className="main-container">
@@ -137,23 +170,46 @@ function Board() {
               name={`selection`}
               colors={selectedColors}
             />
-            <div>
-              <button onClick={() => resetSelectColors()}>
-                Clear selection
-              </button>
-              <button onClick={() => restart()}>Restart game</button>
-              <button onClick={() => submitGuess(selectedColors)}>
+            <div className={classes.root}>
+              <Button variant="contained" onClick={() => resetSelectColors()}>
+                Clear
+              </Button>
+
+              <Button
+                variant="contained"
+                onClick={() => submitGuess(selectedColors)}
+              >
                 Submit
-              </button>
+              </Button>
             </div>
-            <hr />
-            <h3>ANSWER:</h3>
-            <DisplayRow
-              className="selection"
-              name={`solution`}
-              colors={solution}
-            />
           </Card>
+
+          <Accordion
+            expanded={expandAccordion}
+            onClick={() => setExpandAccordion(!expandAccordion)}
+          >
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <h4>Show Answer</h4>
+            </AccordionSummary>
+            <AccordionDetails>
+              <div>
+                <DisplayRow
+                  className="selection"
+                  name={`solution`}
+                  colors={solution}
+                />
+                <Button
+                  variant="contained"
+                  onClick={() => {
+                    setExpandAccordion(false);
+                    setTimeout(restart, 500);
+                  }}
+                >
+                  Restart game
+                </Button>
+              </div>
+            </AccordionDetails>
+          </Accordion>
         </Grid>
       </Grid>
     </Container>

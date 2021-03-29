@@ -42,6 +42,10 @@
   min-height: 300px;
 }
 
+.giveUp {
+  min-height: 300px;
+}
+
 .restart {
   background-color: #e3e5eb;
   height: 200vh;
