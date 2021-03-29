@@ -5,6 +5,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
+
 import {
   Container,
   Grid,
@@ -14,6 +15,12 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Slide,
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { makeStyles } from "@material-ui/core/styles";
@@ -29,12 +36,14 @@ const initialState = {
   guesses: [],
   answerCodes: [],
   solution: [],
+  solved: false,
 };
 
 const actions = {
   SELECT_COLOR: "SELECT_COLOR",
   SUBMIT_GUESS: "SUBMIT_GUESS",
   RESET_SELECTED_COLORS: "RESET_SELECTED_COLORS",
+  RESET_SOLVED: "RESET_SOLVED",
   CREATE_SOLUTION: "CREATE_SOLUTION",
   RESTART: "RESTART",
 };
@@ -45,7 +54,16 @@ const useStyles = makeStyles((theme) => ({
       margin: theme.spacing(1),
     },
   },
+  accordion: {
+    marginTop: "0px",
+    marginBottom: "0px",
+    height: "50px",
+  },
 }));
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 function gameReducer(state, action) {
   switch (action.type) {
@@ -55,23 +73,31 @@ function gameReducer(state, action) {
         ? { ...state, selectedColors: newColors }
         : state;
     case actions.SUBMIT_GUESS:
-      let newAnswerCodes = [
-        ...state.answerCodes,
-        compareToAnswer(action.value, state.solution),
-      ];
-      let newGuesses = [...state.guesses, action.value];
+      const answerCode = compareToAnswer(action.value, state.solution);
+      const newAnswerCodes = [...state.answerCodes, answerCode];
+      const solved =
+        _.indexOf(answerCode, "white") < 0 && answerCode.length === 4;
+      const newGuesses = [...state.guesses, action.value];
       return {
         ...state,
         guesses: newGuesses,
         answerCodes: newAnswerCodes,
         selectedColors: [],
+        solved: solved,
       };
     case actions.RESET_SELECTED_COLORS:
       return { ...state, selectedColors: [] };
+    case actions.RESET_SOLVED:
+      return { ...state, solved: false };
     case actions.CREATE_SOLUTION:
       return { ...state, solution: createSolution() };
     case actions.RESTART:
-      return { ...state, ...initialState, solution: createSolution() };
+      return {
+        ...state,
+        ...initialState,
+        solution: createSolution(),
+        solved: false,
+      };
     default:
       return state;
   }
@@ -95,9 +121,11 @@ function Provider({ children }) {
     guesses: state.guesses,
     answerCodes: state.answerCodes,
     solution: state.solution,
+    solved: state.solved,
     selectColor: (value) => dispatch({ type: actions.SELECT_COLOR, value }),
     submitGuess: (value) => dispatch({ type: actions.SUBMIT_GUESS, value }),
     resetSelectColors: () => dispatch({ type: actions.RESET_SELECTED_COLORS }),
+    resetSolved: () => dispatch({ type: actions.RESET_SOLVED }),
     createSolution: () => dispatch({ type: actions.CREATE_SOLUTION }),
     restart: () => dispatch({ type: actions.RESTART }),
   };
@@ -111,13 +139,14 @@ function Board() {
   const {
     selectedColors,
     resetSelectColors,
-    selectColor,
+    resetSolved,
     submitGuess,
     createSolution,
     restart,
     guesses,
     answerCodes,
     solution,
+    solved,
   } = useContext(GameContext);
 
   useEffect(() => {
@@ -128,6 +157,7 @@ function Board() {
   });
 
   const [expandAccordion, setExpandAccordion] = useState(false);
+  const [newGame, setNewGame] = useState(false);
 
   return (
     <Container className="main-container">
@@ -156,12 +186,38 @@ function Board() {
                   ))}
                 </Grid>
               </Grid>
+              <Dialog
+                open={solved}
+                TransitionComponent={Transition}
+                keepMounted
+                onClose={resetSolved}
+              >
+                <DialogTitle id="alert-dialog-slide-title">
+                  You Won!
+                </DialogTitle>
+                <DialogContent>
+                  <DialogContentText id="alert-dialog-slide-description">
+                    {`It took you ${guesses.length} guesses to win`}
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button
+                    onClick={() => {
+                      setNewGame(true);
+                      resetSolved();
+                    }}
+                    color="primary"
+                  >
+                    Close
+                  </Button>
+                </DialogActions>
+              </Dialog>
             </CardContent>
           </Card>
         </Grid>
         <Grid item xs={3}>
           <Card style={{ margin: "1em 0 1em 0" }}>
-            <h3>SELECT PEGS:</h3>
+            <h3>PEG OPTIONS</h3>
             <PegChoices numColumns={3} />
             <hr />
             <h3>SELECTION:</h3>
@@ -170,17 +226,37 @@ function Board() {
               name={`selection`}
               colors={selectedColors}
             />
+            <hr />
             <div className={classes.root}>
-              <Button variant="contained" onClick={() => resetSelectColors()}>
-                Clear
-              </Button>
+              {!newGame ? (
+                <>
+                  <Button
+                    variant="contained"
+                    onClick={() => resetSelectColors()}
+                  >
+                    Clear
+                  </Button>
 
-              <Button
-                variant="contained"
-                onClick={() => submitGuess(selectedColors)}
-              >
-                Submit
-              </Button>
+                  <Button
+                    variant="contained"
+                    disabled={selectedColors.length != SOLUTION_LENGTH}
+                    onClick={() => submitGuess(selectedColors)}
+                  >
+                    Submit
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  variant="contained"
+                  onClick={() => {
+                    setExpandAccordion(false);
+                    setNewGame(false);
+                    setTimeout(restart, 500);
+                  }}
+                >
+                  Restart game
+                </Button>
+              )}
             </div>
           </Card>
 
@@ -188,26 +264,25 @@ function Board() {
             expanded={expandAccordion}
             onClick={() => setExpandAccordion(!expandAccordion)}
           >
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <AccordionSummary
+              className={classes.accordion}
+              expandIcon={<ExpandMoreIcon />}
+            >
               <h4>Show Answer</h4>
             </AccordionSummary>
             <AccordionDetails>
-              <div>
-                <DisplayRow
-                  className="selection"
-                  name={`solution`}
-                  colors={solution}
-                />
-                <Button
-                  variant="contained"
-                  onClick={() => {
-                    setExpandAccordion(false);
-                    setTimeout(restart, 500);
-                  }}
-                >
-                  Restart game
-                </Button>
-              </div>
+              <Grid container>
+                <Grid item xs={12}>
+                  <h3>Cheater!</h3>
+                </Grid>
+                <Grid item xs={12}>
+                  <DisplayRow
+                    className="selection"
+                    name={`solution`}
+                    colors={solution}
+                  />
+                </Grid>
+              </Grid>
             </AccordionDetails>
           </Accordion>
         </Grid>
