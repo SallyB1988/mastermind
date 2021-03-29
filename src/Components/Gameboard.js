@@ -90,7 +90,10 @@ function Board() {
   } = useContext(GameContext);
 
   useEffect(() => {
-    if (solution === []) createSolution();
+    console.log(solution);
+    if (solution.length === 0) {
+      createSolution();
+    }
   });
 
   return (
