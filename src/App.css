@@ -16,7 +16,13 @@
 
 .main-container {
   height: 800px;
+  width: "80%";
   position: relative;
+}
+
+.header {
+  height: 300px;
+  position: center;
 }
 
 .answer {

@@ -31,6 +31,8 @@ import DisplayRow from "./DisplayRow";
 import DisplayCode from "./DisplayCode";
 import { compareToAnswer, createSolution } from "../Common/utils";
 import { SOLUTION_LENGTH } from "../Common/constants";
+import HeaderImage from "../images";
+
 const initialState = {
   selectedColors: [],
   guesses: [],
@@ -58,6 +60,9 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "0px",
     marginBottom: "0px",
     height: "50px",
+  },
+  header: {
+    height: "300px",
   },
 }));
 
@@ -160,12 +165,24 @@ function Board() {
   const [newGame, setNewGame] = useState(false);
 
   return (
-    <Container className="main-container">
-      <Grid className="gameboard" container spacing={3}>
-        <Grid item xs={9}>
-          <Card style={{ margin: "1em 0 1em 0", background: "lightgrey" }}>
-            <CardContent>
-              <h3>GUESSES:</h3>
+    <Grid
+      className="gameboard"
+      container
+      direction="row"
+      justify="center"
+      alignItems="flex-start"
+      spacing={3}
+    >
+      <Grid item xs={12} centered>
+        <div>
+          <img className="header" src={HeaderImage} alt={"Mastermind"} />
+        </div>
+      </Grid>
+      <Grid item xs={6}>
+        <Card style={{ margin: "1em 0 1em 0", background: "lightgrey" }}>
+          <CardContent>
+            <h3>GUESSES:</h3>
+            <Card style={{ margin: "1em 0 1em 0", background: "lightgrey" }}>
               <Grid container justify="center" spacing={2}>
                 <Grid item xs={2}>
                   {answerCodes.map((code, idx) => (
@@ -186,107 +203,102 @@ function Board() {
                   ))}
                 </Grid>
               </Grid>
-              <Dialog
-                open={solved}
-                TransitionComponent={Transition}
-                keepMounted
-                onClose={resetSolved}
-              >
-                <DialogTitle id="alert-dialog-slide-title">
-                  You Won!
-                </DialogTitle>
-                <DialogContent>
-                  <DialogContentText id="alert-dialog-slide-description">
-                    {`It took you ${guesses.length} guesses to win`}
-                  </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                  <Button
-                    onClick={() => {
-                      setNewGame(true);
-                      resetSolved();
-                    }}
-                    color="primary"
-                  >
-                    Close
-                  </Button>
-                </DialogActions>
-              </Dialog>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={3}>
-          <Card style={{ margin: "1em 0 1em 0" }}>
-            <h3>PEG OPTIONS</h3>
-            <PegChoices numColumns={3} />
-            <hr />
-            <h3>SELECTION:</h3>
-            <DisplayRow
-              className="selection"
-              name={`selection`}
-              colors={selectedColors}
-            />
-            <hr />
-            <div className={classes.root}>
-              {!newGame ? (
-                <>
-                  <Button
-                    variant="contained"
-                    onClick={() => resetSelectColors()}
-                  >
-                    Clear
-                  </Button>
+            </Card>
+            <Dialog
+              open={solved}
+              TransitionComponent={Transition}
+              keepMounted
+              onClose={resetSolved}
+            >
+              <DialogTitle id="alert-dialog-slide-title">You Won!</DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-slide-description">
+                  {`It took you ${guesses.length} guesses to win`}
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button
+                  onClick={() => {
+                    setNewGame(true);
+                    resetSolved();
+                  }}
+                  color="primary"
+                >
+                  Close
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </CardContent>
+        </Card>
+      </Grid>
+      <Grid item xs={2}>
+        <Card style={{ margin: "1em 0 1em 0" }}>
+          <h3>PEG OPTIONS</h3>
+          <PegChoices numColumns={3} />
+          <hr />
+          <h3>SELECTION:</h3>
+          <DisplayRow
+            className="selection"
+            name={`selection`}
+            colors={selectedColors}
+          />
+          <hr />
+          <div className={classes.root}>
+            {!newGame ? (
+              <>
+                <Button variant="contained" onClick={() => resetSelectColors()}>
+                  Clear
+                </Button>
 
-                  <Button
-                    variant="contained"
-                    disabled={selectedColors.length != SOLUTION_LENGTH}
-                    onClick={() => submitGuess(selectedColors)}
-                  >
-                    Submit
-                  </Button>
-                </>
-              ) : (
                 <Button
                   variant="contained"
-                  onClick={() => {
-                    setExpandAccordion(false);
-                    setNewGame(false);
-                    setTimeout(restart, 500);
-                  }}
+                  disabled={selectedColors.length != SOLUTION_LENGTH}
+                  onClick={() => submitGuess(selectedColors)}
                 >
-                  Restart game
+                  Submit
                 </Button>
-              )}
-            </div>
-          </Card>
+              </>
+            ) : (
+              <Button
+                variant="contained"
+                onClick={() => {
+                  setExpandAccordion(false);
+                  setNewGame(false);
+                  setTimeout(restart, 500);
+                }}
+              >
+                Restart game
+              </Button>
+            )}
+          </div>
+        </Card>
 
-          <Accordion
-            expanded={expandAccordion}
-            onClick={() => setExpandAccordion(!expandAccordion)}
+        <Accordion
+          expanded={expandAccordion}
+          onClick={() => setExpandAccordion(!expandAccordion)}
+        >
+          <AccordionSummary
+            className={classes.accordion}
+            expandIcon={<ExpandMoreIcon />}
           >
-            <AccordionSummary
-              className={classes.accordion}
-              expandIcon={<ExpandMoreIcon />}
-            >
-              <h4>Show Answer</h4>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Grid container>
-                <Grid item xs={12}>
-                  <h3>Cheater!</h3>
-                </Grid>
-                <Grid item xs={12}>
-                  <DisplayRow
-                    className="selection"
-                    name={`solution`}
-                    colors={solution}
-                  />
-                </Grid>
+            <h4>Show Answer</h4>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Grid container>
+              <Grid item xs={12}>
+                <h3>Cheater!</h3>
               </Grid>
-            </AccordionDetails>
-          </Accordion>
-        </Grid>
+              <Grid item xs={12}>
+                <DisplayRow
+                  className="selection"
+                  name={`solution`}
+                  colors={solution}
+                />
+              </Grid>
+            </Grid>
+          </AccordionDetails>
+        </Accordion>
       </Grid>
-    </Container>
+    </Grid>
   );
 }
