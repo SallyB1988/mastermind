@@ -1,9 +1,1 @@
-export const SOLUTION_LENGTH = 4;
-export const COLOR_CHOICES = [
-  "yellow",
-  "red",
-  "blue",
-  "green",
-  "black",
-  "grey",
-];
+export const COLOR_SET = ["yellow", "red", "blue", "green", "black", "grey"];

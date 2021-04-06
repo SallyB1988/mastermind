@@ -1,5 +1,4 @@
-import React, { Fragment } from "react";
-import _ from "lodash";
+import React from "react";
 import Brightness1Icon from "@material-ui/icons/Brightness1";
 
 export default function DisplayRow(props) {

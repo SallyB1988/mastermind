@@ -1,15 +1,12 @@
-import { SOLUTION_LENGTH, COLOR_CHOICES } from "./constants";
-
 export function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
 
-export function createSolution() {
+export function createSolution(numPegs, colorSet) {
   let solution = [];
-  while (solution.length < SOLUTION_LENGTH) {
-    const index = getRandomInt(COLOR_CHOICES.length);
-    console.log(index);
-    solution.push(COLOR_CHOICES[index]);
+  while (solution.length < numPegs) {
+    const index = getRandomInt(numPegs);
+    solution.push(colorSet[index]);
   }
   return solution;
 }

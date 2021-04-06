@@ -1,16 +1,15 @@
-import React from "react";
+import React, { useContext } from "react";
+import { GameContext } from "./Gameboard";
 import { Grid } from "@material-ui/core";
 
 import Peg from "../Components/Peg";
-import { COLOR_CHOICES } from "../Common/constants";
 
 function PegChoices(props) {
-  const { numColumnss } = props;
-  const width = Math.floor(12 / numColumnss);
+  const { colorsToUse } = useContext(GameContext);
 
   return (
     <Grid container justify="center">
-      {COLOR_CHOICES.map((c, idx) => {
+      {colorsToUse.map((c, idx) => {
         return <Peg key={`peg-${idx}`} color={c} />;
       })}
     </Grid>
