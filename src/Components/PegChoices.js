@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { GameContext } from "./Gameboard";
-import { Grid } from "@material-ui/core";
+import { Grid } from "semantic-ui-react";
 
 import Peg from "../Components/Peg";
 

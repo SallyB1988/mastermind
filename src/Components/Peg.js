@@ -1,12 +1,13 @@
 import React, { useContext } from "react";
 import { GameContext } from "./Gameboard";
-import Brightness1Icon from "@material-ui/icons/Brightness1";
+import { Icon } from "semantic-ui-react";
 
-const Peg = ({ color, size = 40 }) => {
+const Peg = ({ color, size = 30 }) => {
   const { selectColor } = useContext(GameContext);
 
   return (
-    <Brightness1Icon
+    <Icon
+      name="circle"
       style={{ color: color, fontSize: size }}
       onClick={() => selectColor(color)}
     />

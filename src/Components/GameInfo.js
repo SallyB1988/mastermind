@@ -1,24 +1,8 @@
 import React, { useContext, useState } from "react";
-import { Grid, Button, Menu, MenuItem, Modal } from "@material-ui/core";
+import { Grid, Button, Menu, MenuItem, Modal } from "semantic-ui-react";
 import { GameContext } from "./Gameboard";
-import { makeStyles } from "@material-ui/core/styles";
-import { Translate } from "@material-ui/icons";
-
-const useStyles = makeStyles((theme) => ({
-  root: {},
-  paper: {
-    position: "absolute",
-    width: 400,
-    backgroundColor: theme.palette.background.paper,
-    border: "2px solid #000",
-    boxShadow: theme.shadows[5],
-    padding: theme.spacing(2, 4, 3),
-  },
-}));
 
 export default function GameInfo() {
-  const classes = useStyles();
-
   const { numPuzzlePegs, setNumPuzzlePegs, restart } = useContext(GameContext);
 
   const [instructionModal, setInstructionModal] = useState(false);
@@ -42,7 +26,7 @@ export default function GameInfo() {
   };
 
   return (
-    <Grid className="gameInfo" xs={12}>
+    <Grid.Row className="gameInfo" xs={12}>
       <Button
         className="button"
         variant="contained"
@@ -76,7 +60,7 @@ export default function GameInfo() {
         open={instructionModal}
         onClose={() => setInstructionModal(false)}
       >
-        <body className={classes.paper}>
+        <Modal.Content>
           <h3>Goal:</h3>
           <p>
             The computer has created a code for you to crack! Try to guess the
@@ -106,8 +90,8 @@ export default function GameInfo() {
             NOTE: The response pegs do NOT correspond to any particular column
             in the guessed section.
           </p>
-        </body>
+        </Modal.Content>
       </Modal>
-    </Grid>
+    </Grid.Row>
   );
 }

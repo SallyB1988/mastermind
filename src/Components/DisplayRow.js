@@ -1,12 +1,13 @@
 import React from "react";
-import Brightness1Icon from "@material-ui/icons/Brightness1";
+import { Icon } from "semantic-ui-react";
 
 export default function DisplayRow(props) {
   const { colors, name, size = 40 } = props;
   return (
     <div className="displayTableRow">
       {colors.map((c, idx) => (
-        <Brightness1Icon
+        <Icon
+          name="circle"
           key={`guess-${name}-${idx}`}
           style={{ color: c, fontSize: size }}
         />

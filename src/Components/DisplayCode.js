@@ -1,6 +1,5 @@
 import React from "react";
-import Brightness1Icon from "@material-ui/icons/Brightness1";
-
+import { Icon } from "semantic-ui-react";
 // Display key code in two rows
 export default function DisplayCode(props) {
   const { colors, name, size = 15 } = props;
@@ -10,7 +9,8 @@ export default function DisplayCode(props) {
     <div className="keyRow">
       <div className="displayKeyRow">
         {firstRow.map((c, idx) => (
-          <Brightness1Icon
+          <Icon
+            name="circle"
             key={`guess-${name}-${idx}`}
             style={{ color: c, fontSize: size }}
           />
@@ -18,7 +18,8 @@ export default function DisplayCode(props) {
       </div>
       <div className="displayKeyRow">
         {secondRow.map((c, idx) => (
-          <Brightness1Icon
+          <Icon
+            name="circle"
             key={`guess-${name}-${idx}`}
             style={{ color: c, fontSize: size }}
           />
