@@ -30,19 +30,14 @@
   bottom: 0px;
 }
 
+.menu {
+  float: right;
+  background-color: #e0e1e2 !important;
+}
+
 .gameboard {
   text-align: center;
-  background-color: #4c4c64b3;
   align-content: space-between;
-}
-
-.gameInfo {
-  align-content: center;
-}
-
-.pegBin {
-  background-color: #4c4c64b3;
-  height: 5em;
 }
 
 .infobutton {
@@ -50,26 +45,22 @@
   margin-right: 20px !important;
 }
 .displayTableRow {
-  background-color: #b6bec8 !important;
   display: flex;
-  justify-content: center;
+  justify-content: left;
   align-items: center;
-  height: 3.4em;
-  margin-top: 5px;
-  margin-bottom: 5px;
+  height: 2.5em;
 }
 
 .displayKeyRow {
-  background-color: #b6bec8 !important;
   display: flex;
-  justify-content: center;
+  justify-content: left;
   align-items: center;
-  height: 1.7em;
+  height: 1.5em;
 }
 
-.keyRow {
-  margin-top: 5px;
-  margin-bottom: 5px;
+.gameboard-row {
+  padding: 5px !important;
+  margin: 0px !important;
 }
 
 .border {
@@ -77,10 +68,14 @@
   border-width: thin;
 }
 
-.pegCard {
-  min-height: 300px;
-  background-color: #b6bec8 !important;
-  margin: "1em 0 1em 0";
+.main {
+  background-color: #b6bec8;
+}
+
+.peg-choices {
+  display: flex;
+  justify-content: center;
+  height: 3em;
 }
 .showAnswer {
   background-color: #b6bec8 !important;
@@ -90,7 +85,6 @@
   transform: translate("25%", "25%") !important;
 }
 .restart {
-  background-color: #b6bec8;
   height: 200vh;
   display: flex;
   flex-direction: column;

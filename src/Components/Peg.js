@@ -8,7 +8,8 @@ const Peg = ({ color, size = 30 }) => {
   return (
     <Icon
       name="circle"
-      style={{ color: color, fontSize: size }}
+      style={{ color: color }}
+      size="large"
       onClick={() => selectColor(color)}
     />
   );

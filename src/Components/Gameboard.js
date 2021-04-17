@@ -149,28 +149,28 @@ function Board() {
   const [expandAccordion, setExpandAccordion] = useState(false);
 
   return (
-    <Grid container celled>
+    <Grid className="main" container centered celled>
       <Grid.Row>
-        <Grid.Column width={8}>
+        <Grid.Column width={10}>
           <Image src={HeaderImage} alt={"Mastermind"} />
           <GameInfo />
           <YouWonModal />
         </Grid.Column>
       </Grid.Row>
 
-      <Grid.Row>
-        <Grid.Column width={10}>
-          <Grid container>
+      <Grid.Row centered>
+        <Grid.Column width={7}>
+          <Grid container celled>
             {_.map(answerCodes, (code, idx) => (
-              <Grid.Row>
-                <Grid.Column className="border" width={4}>
+              <Grid.Row verticalAlign="middle">
+                <Grid.Column className="gameboard-row" width={4}>
                   <DisplayCode
                     key={`code-${idx}`}
                     name={`code-${idx}`}
                     colors={code}
                   />
                 </Grid.Column>
-                <Grid.Column width={10}>
+                <Grid.Column className="gameboard-row" width={10}>
                   <DisplayRow
                     key={`row-${idx}`}
                     name={`row-${idx}`}
@@ -181,10 +181,10 @@ function Board() {
             ))}
           </Grid>
         </Grid.Column>
-        <Grid.Column width={6}>
-          <Grid.Row className="pegCard">
+        <Grid.Column width={5}>
+          <Grid.Row>
             <h3>PEG OPTIONS</h3>
-            <PegChoices numColumns={3} />
+            <PegChoices />
             <hr />
             <h3>SELECTION:</h3>
             <DisplayRow name={`selection`} colors={selectedColors} />

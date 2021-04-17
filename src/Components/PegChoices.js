@@ -8,11 +8,11 @@ function PegChoices(props) {
   const { colorsToUse } = useContext(GameContext);
 
   return (
-    <Grid container justify="center">
+    <Grid.Row className="peg-choices">
       {colorsToUse.map((c, idx) => {
         return <Peg key={`peg-${idx}`} color={c} />;
       })}
-    </Grid>
+    </Grid.Row>
   );
 }
 

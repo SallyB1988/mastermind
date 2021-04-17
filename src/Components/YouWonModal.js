@@ -12,7 +12,7 @@ function YouWonModal() {
       onClose={() => setOpen(false)}
       onOpen={() => setOpen(true)}
       open={solved}
-      trigger={<Button>Show Modal</Button>}
+      trigger={open}
     >
       <Modal.Content>
         <Modal.Description>

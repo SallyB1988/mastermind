@@ -2,7 +2,7 @@ import React from "react";
 import { Icon } from "semantic-ui-react";
 // Display key code in two rows
 export default function DisplayCode(props) {
-  const { colors, name, size = 15 } = props;
+  const { colors, name } = props;
   const firstRow = colors.slice(0, colors.length / 2);
   const secondRow = colors.slice(firstRow.length);
   return (
@@ -12,7 +12,8 @@ export default function DisplayCode(props) {
           <Icon
             name="circle"
             key={`guess-${name}-${idx}`}
-            style={{ color: c, fontSize: size }}
+            size="small"
+            style={{ color: c }}
           />
         ))}
       </div>
@@ -21,7 +22,8 @@ export default function DisplayCode(props) {
           <Icon
             name="circle"
             key={`guess-${name}-${idx}`}
-            style={{ color: c, fontSize: size }}
+            size="small"
+            style={{ color: c }}
           />
         ))}
       </div>

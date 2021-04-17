@@ -1,60 +1,48 @@
 import React, { useContext, useState } from "react";
-import { Grid, Button, Menu, MenuItem, Modal } from "semantic-ui-react";
+import { Grid, Button, Menu, Modal, Dropdown } from "semantic-ui-react";
 import { GameContext } from "./Gameboard";
 
 export default function GameInfo() {
   const { numPuzzlePegs, setNumPuzzlePegs, restart } = useContext(GameContext);
 
   const [instructionModal, setInstructionModal] = useState(false);
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [selectionMenu, setSelectionMenu] = React.useState(false);
 
-  const handleSetDifficulty = (event) => {
-    setSelectionMenu(true);
-    setAnchorEl(event.currentTarget);
-  };
+  const options = [
+    { key: 1, text: "3 Colors", value: 3 },
+    { key: 2, text: "4 Colors", value: 4 },
+    { key: 3, text: "5 Colors", value: 5 },
+  ];
 
-  const handleCloseSetDifficulty = () => {
-    restart();
-    setAnchorEl(null);
-  };
-
-  const handleSelection = (val) => {
-    setSelectionMenu(false);
-    setNumPuzzlePegs(val);
+  const handleChange = (e, data) => {
+    setNumPuzzlePegs(data.value);
     restart();
   };
 
   return (
-    <Grid.Row className="gameInfo" xs={12}>
-      <Button
-        className="button"
-        variant="contained"
-        onClick={() => setInstructionModal(!instructionModal)}
-      >
-        Instructions
-      </Button>
-      <Button
-        className="infobutton"
-        id="selectDifficulty"
-        aria-controls="simple-menu"
-        aria-haspopup="true"
-        variant="contained"
-        onClick={handleSetDifficulty}
-      >
-        Select # of Pegs
-      </Button>
-      <Menu
-        id="simple-menu"
-        anchorEl={anchorEl}
-        keepMounted
-        open={selectionMenu}
-        onClose={handleCloseSetDifficulty}
-      >
-        <MenuItem onClick={() => handleSelection(4)}>4</MenuItem>
-        <MenuItem onClick={() => handleSelection(5)}>5</MenuItem>
-        <MenuItem onClick={() => handleSelection(6)}>6</MenuItem>
-      </Menu>
+    <Grid>
+      <Grid.Row columns={2}>
+        <Grid.Column floated="left">
+          <Button
+            className="button"
+            variant="contained"
+            onClick={() => setInstructionModal(!instructionModal)}
+          >
+            Instructions
+          </Button>
+        </Grid.Column>
+        <Grid.Column floated="right">
+          <Menu compact className="menu">
+            <Dropdown
+              text={`${numPuzzlePegs} Colors`}
+              options={options}
+              simple
+              item
+              onChange={handleChange}
+            />
+          </Menu>
+        </Grid.Column>
+      </Grid.Row>
+
       <Modal
         className="modal"
         open={instructionModal}
@@ -92,6 +80,6 @@ export default function GameInfo() {
           </p>
         </Modal.Content>
       </Modal>
-    </Grid.Row>
+    </Grid>
   );
 }
