@@ -1,28 +1,18 @@
-.App {
-  text-align: center;
-  background-color: blueviolet;
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.main-container {
-  height: 800px;
-  width: "80%";
-  position: relative;
+.full-bg-size {
+  background-image: url("../src/images/dots.jpg");
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
 }
 
 .header {
   height: 300px;
   position: center;
+}
+
+.guessed-section {
+  height: 700px;
 }
 
 .answer {
@@ -44,6 +34,7 @@
   margin-left: 20px !important;
   margin-right: 20px !important;
 }
+
 .displayTableRow {
   display: flex;
   justify-content: left;

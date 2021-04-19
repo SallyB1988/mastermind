@@ -1,12 +1,6 @@
-import React, {
-  createContext,
-  useContext,
-  useReducer,
-  useEffect,
-  useState,
-} from "react";
+import React, { createContext, useContext, useReducer, useEffect } from "react";
 
-import { Grid, Button, Accordion, Icon, Image } from "semantic-ui-react";
+import { Grid, Button, Image } from "semantic-ui-react";
 
 import _ from "lodash";
 import PegChoices from "./PegChoices";
@@ -14,12 +8,16 @@ import DisplayRow from "./DisplayRow";
 import DisplayCode from "./DisplayCode";
 import GameInfo from "./GameInfo";
 import { compareToAnswer, createSolution } from "../Common/utils";
-import HeaderImage from "../images";
+import { HeaderImage } from "../images";
 import { COLOR_SET } from "../Common/constants";
-import YouWonModal from "./YouWonModal";
+import WinLoseModal from "./WinLoseModal";
+// import GiveUp from "./GiveUp";
+
+const maxTries = 10;
 
 const initialState = {
   numPuzzlePegs: 4,
+  numColorsToUse: 5,
   colorsToUse: [],
   selectedColors: [],
   guesses: [],
@@ -31,6 +29,7 @@ const initialState = {
 const actions = {
   SELECT_COLOR: "SELECT_COLOR",
   SET_NUM_PUZZLE_PEGS: "SET_NUM_PUZZLE_PEGS",
+  SET_NUM_COLORS_TO_USE: "SET_NUM_COLORS_TO_USE",
   SET_COLORS_TO_USE: "SET_COLORS_TO_USE",
   SUBMIT_GUESS: "SUBMIT_GUESS",
   RESET_SELECTED_COLORS: "RESET_SELECTED_COLORS",
@@ -42,6 +41,7 @@ const actions = {
 function gameReducer(state, action) {
   const colorSet = state.colorsToUse;
   const numPegs = state.numPuzzlePegs;
+  const numColorsToUse = state.numColorsToUse;
 
   switch (action.type) {
     case actions.SELECT_COLOR:
@@ -55,6 +55,7 @@ function gameReducer(state, action) {
       const solved =
         _.indexOf(answerCode, "white") < 0 &&
         answerCode.length === state.numPuzzlePegs;
+      const lost = newAnswerCodes.length === maxTries && !solved;
       const newGuesses = [...state.guesses, action.value];
       return {
         ...state,
@@ -62,6 +63,7 @@ function gameReducer(state, action) {
         answerCodes: newAnswerCodes,
         selectedColors: [],
         solved: solved,
+        lost: lost,
       };
     case actions.RESET_SELECTED_COLORS:
       return { ...state, selectedColors: [] };
@@ -71,13 +73,17 @@ function gameReducer(state, action) {
       return {
         ...state,
         ...initialState,
-        numPuzzlePegs: numPegs,
-        colorsToUse: COLOR_SET.slice(0, numPegs),
+        numPuzzlePegs: numPegs, // I don't think I need these 3 lines
+        numColorsToUse: numColorsToUse,
+        colorsToUse: COLOR_SET.slice(0, numColorsToUse),
         solution: createSolution(numPegs, colorSet),
         solved: false,
+        lost: false,
       };
     case actions.SET_NUM_PUZZLE_PEGS:
       return { ...state, numPuzzlePegs: action.value };
+    case actions.SET_NUM_COLORS_TO_USE:
+      return { ...state, numColorsToUse: action.value };
     case actions.SET_COLORS_TO_USE:
       return { ...state, colorsToUse: action.value };
     default:
@@ -102,13 +108,17 @@ function Provider({ children }) {
     selectedColors: state.selectedColors,
     colorsToUse: state.colorsToUse,
     numPuzzlePegs: state.numPuzzlePegs,
+    numColorsToUse: state.numColorsToUse,
     guesses: state.guesses,
     answerCodes: state.answerCodes,
     solution: state.solution,
     solved: state.solved,
+    lost: state.lost,
     selectColor: (value) => dispatch({ type: actions.SELECT_COLOR, value }),
     setNumPuzzlePegs: (value) =>
       dispatch({ type: actions.SET_NUM_PUZZLE_PEGS, value }),
+    setNumColorsToUse: (value) =>
+      dispatch({ type: actions.SET_NUM_COLORS_TO_USE, value }),
     setColorsToUse: (value) =>
       dispatch({ type: actions.SET_COLORS_TO_USE, value }),
     submitGuess: (value) => dispatch({ type: actions.SUBMIT_GUESS, value }),
@@ -126,67 +136,65 @@ function Board() {
     selectedColors,
     colorsToUse,
     numPuzzlePegs,
+    numColorsToUse,
     resetSelectColors,
-    resetSolved,
     setColorsToUse,
     submitGuess,
     createSolution,
-    restart,
     guesses,
     answerCodes,
     solution,
-    solved,
   } = useContext(GameContext);
 
   useEffect(() => {
     console.log(solution);
     if (solution.length === 0) {
-      setColorsToUse(COLOR_SET.slice(0, numPuzzlePegs));
+      setColorsToUse(COLOR_SET.slice(0, numColorsToUse));
       createSolution(numPuzzlePegs, colorsToUse);
     }
   });
-
-  const [expandAccordion, setExpandAccordion] = useState(false);
 
   return (
     <Grid className="main" container centered celled>
       <Grid.Row>
         <Grid.Column width={10}>
-          <Image src={HeaderImage} alt={"Mastermind"} />
+          <Image src={HeaderImage} alt={"Code Cracker"} />
           <GameInfo />
-          <YouWonModal />
+          <WinLoseModal />
         </Grid.Column>
       </Grid.Row>
 
-      <Grid.Row centered>
+      <Grid.Row className="guessed-section" centered>
         <Grid.Column width={7}>
-          <Grid container celled>
-            {_.map(answerCodes, (code, idx) => (
-              <Grid.Row verticalAlign="middle">
-                <Grid.Column className="gameboard-row" width={4}>
-                  <DisplayCode
-                    key={`code-${idx}`}
-                    name={`code-${idx}`}
-                    colors={code}
-                  />
-                </Grid.Column>
-                <Grid.Column className="gameboard-row" width={10}>
-                  <DisplayRow
-                    key={`row-${idx}`}
-                    name={`row-${idx}`}
-                    colors={guesses[idx]}
-                  />
-                </Grid.Column>
-              </Grid.Row>
-            ))}
-          </Grid>
+          {answerCodes.length > 0 && (
+            <Grid container celled>
+              {_.map(answerCodes, (code, idx) => (
+                <Grid.Row verticalAlign="middle">
+                  <Grid.Column className="gameboard-row" width={4}>
+                    <DisplayCode
+                      key={`code-${idx}`}
+                      name={`code-${idx}`}
+                      colors={code}
+                    />
+                  </Grid.Column>
+                  <Grid.Column className="gameboard-row" width={10}>
+                    <DisplayRow
+                      key={`row-${idx}`}
+                      name={`row-${idx}`}
+                      colors={guesses[idx]}
+                    />
+                  </Grid.Column>
+                </Grid.Row>
+              ))}
+            </Grid>
+          )}
         </Grid.Column>
         <Grid.Column width={5}>
           <Grid.Row>
             <h3>PEG OPTIONS</h3>
             <PegChoices />
             <hr />
-            <h3>SELECTION:</h3>
+            <h3>GUESS:</h3>
             <DisplayRow name={`selection`} colors={selectedColors} />
             <hr />
             <div>
@@ -204,36 +212,9 @@ function Board() {
               </>
             </div>
           </Grid.Row>
-          <Grid.Row>
-            <Accordion className="showAnswer">
-              <Accordion.Title
-                active={expandAccordion}
-                onClick={() => setExpandAccordion(!expandAccordion)}
-              >
-                <h4>Give up</h4>
-                <Icon name="dropdown" />
-              </Accordion.Title>
-              <Accordion.Content active={expandAccordion}>
-                <div>
-                  <h3>Solution</h3>
-                  <DisplayRow
-                    className="selection"
-                    name={`solution`}
-                    colors={solution}
-                  />
-                  <Button
-                    variant="contained"
-                    onClick={() => {
-                      setExpandAccordion(false);
-                      setTimeout(restart, 500);
-                    }}
-                  >
-                    Restart game
-                  </Button>
-                </div>
-              </Accordion.Content>
-            </Accordion>
-          </Grid.Row>
+          {/* <Grid.Row>
+            <GiveUp />
+          </Grid.Row> */}
         </Grid.Column>
       </Grid.Row>
     </Grid>

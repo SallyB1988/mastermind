@@ -1,3 +1,5 @@
-import HeaderImage from "./mastermind_header.jpg";
+import HeaderImage from "./codeCracker.jpg";
+import YouWon from "./youWonWithBackground.jpg";
+import YouLose from "./youLose.jpg";
 
-export default HeaderImage;
+export { HeaderImage, YouWon, YouLose };

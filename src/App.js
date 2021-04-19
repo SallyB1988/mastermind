@@ -4,7 +4,7 @@ import "./App.css";
 
 export default function App() {
   return (
-    <main>
+    <main className="full-bg-size">
       <GameBoard />
     </main>
   );
